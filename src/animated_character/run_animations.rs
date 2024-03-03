@@ -12,12 +12,12 @@ pub fn run_animations(
 ) {
     for (player_character_name, animation_entity_link) in &mut player_character_query.iter_mut() {
         if let Ok(mut animation_player) = animation_player_query.get_mut(animation_entity_link.0) {
-            if player_character_name.0 == "Player 2".to_string() {
+            if player_character_name.0 == "Adventurer".to_string() {
                 animation_player
                     .play(
                         animations
                             .0
-                            .get("Death")
+                            .get("Idle_Neutral")
                             .expect("animation to exist")
                             .clone_weak(),
                     )
@@ -25,7 +25,7 @@ pub fn run_animations(
                     .set_speed(0.5);
             }
 
-            if player_character_name.0 == "Player 1".to_string() {
+            if player_character_name.0 == "Casual".to_string() {
                 animation_player
                     .play(
                         animations
@@ -35,7 +35,7 @@ pub fn run_animations(
                             .clone_weak(),
                     )
                     .repeat()
-                    .set_speed(0.5);
+                    .set_speed(1.0);
             }
         }
     }

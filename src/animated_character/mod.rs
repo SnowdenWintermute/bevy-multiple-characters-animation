@@ -1,7 +1,7 @@
 mod link_animations;
 mod run_animations;
 use crate::asset_loader::{AssetLoaderState, AssetPack};
-use bevy::{gltf::Gltf, prelude::*, render::mesh::shape::Cube, utils::HashMap};
+use bevy::{gltf::Gltf, pbr::Mesh3d, prelude::*, render::mesh::shape::Cube, utils::HashMap};
 
 pub struct AnimatedCharacterPlugin;
 impl Plugin for AnimatedCharacterPlugin {
@@ -15,6 +15,7 @@ impl Plugin for AnimatedCharacterPlugin {
                     link_animations::link_animations.run_if(in_state(AssetLoaderState::Done)),
                 ),
             )
+            // .add_systems(OnEnter(SpawnCharacterState::Editing), remove_parts)
             .add_systems(OnEnter(SpawnCharacterState::Done), list_scene_tree);
     }
 }
@@ -29,6 +30,7 @@ pub struct PlayerCharacterName(String);
 pub enum SpawnCharacterState {
     #[default]
     Loading,
+    Editing,
     Done,
 }
 
@@ -38,46 +40,128 @@ fn spawn_characters(
     assets_gltf: Res<Assets<Gltf>>,
     mut next_state: ResMut<NextState<SpawnCharacterState>>,
 ) {
-    if let Some(gltf) = assets_gltf.get(&asset_pack.0) {
-        // println!("gltf: {:#?}", gltf);
-        for node in gltf.named_nodes.iter() {
-            println!("node: {:#?}", node.0);
+    let mut x_pos = -0.5;
+    for (name, gltf_handle_loading_tracker) in &asset_pack.0 {
+        if let Some(gltf) = assets_gltf.get(&gltf_handle_loading_tracker.gltf_handle) {
+            commands.spawn((
+                SceneBundle {
+                    scene: gltf.named_scenes["Scene"].clone(),
+                    transform: Transform::from_xyz(x_pos, 0.0, 0.0),
+                    ..Default::default()
+                },
+                PlayerCharacterName(name.clone()),
+            ));
+
+            x_pos += 1.0;
+
+            let mut animations = HashMap::new();
+            for named_animation in gltf.named_animations.iter() {
+                animations.insert(
+                    named_animation.0.clone(),
+                    gltf.named_animations[named_animation.0].clone(),
+                );
+            }
+
+            commands.insert_resource(Animations(animations));
+        }
+    }
+    next_state.set(SpawnCharacterState::Editing);
+    // if let Some(gltf) = assets_gltf.get(&asset_pack.0) {
+    //     // println!("gltf: {:#?}", gltf);
+    //     for node in gltf.named_nodes.iter() {
+    //         // println!("node: {:#?}", node.0);
+    //     }
+
+    //     commands.spawn((
+    //         SceneBundle {
+    //             scene: gltf.named_scenes["Scene"].clone(),
+    //             transform: Transform::from_xyz(0.0, 0.0, 0.0),
+    //             ..Default::default()
+    //         },
+    //         PlayerCharacterName("Player 1".to_string()),
+    //     ));
+    //     next_state.set(SpawnCharacterState::Editing);
+
+    //     // commands.spawn((
+    //     //     SceneBundle {
+    //     //         scene: gltf.named_scenes["Scene"].clone(),
+    //     //         transform: Transform::from_xyz(2.0, 0.0, 0.0),
+    //     //         ..Default::default()
+    //     //     },
+    //     //     PlayerCharacterName("Player 2".to_string()),
+    //     // ));
+
+    //     let mut animations = HashMap::new();
+    //     for named_animation in gltf.named_animations.iter() {
+    //         animations.insert(
+    //             named_animation.0.clone(),
+    //             gltf.named_animations[named_animation.0].clone(),
+    //         );
+    //     }
+
+    //     commands.insert_resource(Animations(animations));
+    // }
+}
+
+pub fn remove_parts(
+    asset_pack: Res<AssetPack>,
+    assets_gltf: Res<Assets<Gltf>>,
+    mut commands: Commands,
+    scene_query: Query<Entity, With<PlayerCharacterName>>,
+    children: Query<&Children>,
+    parents: Query<&Parent>,
+    material_handles: Query<&Handle<StandardMaterial>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mesh_handles: Query<&Handle<Mesh>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    names: Query<&Name>,
+    mut next_state: ResMut<NextState<SpawnCharacterState>>,
+) {
+    let scene_entity = &scene_query.get_single().expect("to have spawned a scene");
+    for (i, entity) in children.iter_descendants(*scene_entity).enumerate() {
+        let name = match names.get(entity) {
+            Ok(name) => format!("{name}"),
+            Err(_) => "".to_string(),
+        };
+
+        if name == "Casual_Body" {
+            commands.entity(entity).despawn_recursive();
+
+            // if let Some(gltf) = assets_gltf.get(&asset_pack.0) {
+            //     let handle = commands.spawn((PbrBundle {
+            //         mesh: gltf.named_meshes["Casual_Body"].clone(),
+            //         ..Default::default()
+            //     },));
+            // }
         }
 
-        commands.spawn((
-            SceneBundle {
-                scene: gltf.named_scenes["Scene"].clone(),
-                transform: Transform::from_xyz(0.0, 0.0, 0.0),
-                ..Default::default()
-            },
-            PlayerCharacterName("Player 1".to_string()),
-        ));
-        next_state.set(SpawnCharacterState::Done);
-
-        // commands.spawn((
-        //     SceneBundle {
-        //         scene: gltf.named_scenes["Scene"].clone(),
-        //         transform: Transform::from_xyz(2.0, 0.0, 0.0),
-        //         ..Default::default()
-        //     },
-        //     PlayerCharacterName("Player 2".to_string()),
-        // ));
-
-        let mut animations = HashMap::new();
-        animations.insert(
-            String::from("Death"),
-            gltf.named_animations["Death"].clone(),
-        );
-
-        animations.insert(String::from("Idle"), gltf.named_animations["Idle"].clone());
-
-        commands.insert_resource(Animations(animations));
+        if let Ok(mesh_handle) = mesh_handles.get(entity) {
+            for child in children.iter_descendants(entity) {
+                // println!("mesh child: {}", names.get(child).expect(""));
+                //
+            }
+            if let Ok(ref_to_parent) = parents.get(entity) {
+                let parent = ref_to_parent.get();
+                // println!("mesh parent: {}", names.get(parent).expect(""));
+                if let Ok(ref_to_parent_parent) = parents.get(parent) {
+                    let parent_parent = ref_to_parent_parent.get();
+                    // println!(
+                    //     "mesh parent parent: {}",
+                    //     names.get(parent_parent).expect("")
+                    // );
+                }
+                // for child in children.iter_descendants(parent) {
+                //     println!("parent child: {}", names.get(child).expect(""))
+                // }
+            }
+        }
     }
+    next_state.set(SpawnCharacterState::Done);
 }
 
 pub fn list_scene_tree(
     mut commands: Commands,
-    scene: Query<Entity, With<PlayerCharacterName>>,
+    scene_query: Query<Entity, With<PlayerCharacterName>>,
     children: Query<&Children>,
     time: Res<Time>,
     material_handles: Query<&Handle<StandardMaterial>>,
@@ -86,30 +170,57 @@ pub fn list_scene_tree(
     mut meshes: ResMut<Assets<Mesh>>,
     mut transforms: Query<&mut Transform>,
     global_transforms: Query<&GlobalTransform>,
+    names: Query<&Name>,
     asset_pack: Res<AssetPack>,
     assets_gltf: Res<Assets<Gltf>>,
 ) {
-    println!("LISTING");
-    for scene_entity in &scene {
+    for scene_entity in &scene_query {
+        let mut num_non_meshes_seen = 0;
+        let mut num_meshes_seen = 0;
+        // let mut cube_color = Color::rgb(0.0, 0.0, 0.0);
+        let mut cube_color = Color::rgb(1.0, 1.0, 1.0);
         for (i, entity) in children.iter_descendants(scene_entity).enumerate() {
+            let name = match names.get(entity) {
+                Ok(name) => format!("{name}"),
+                Err(_) => "".to_string(),
+            };
+
+            // println!("found name: {:#?}", name);
             if let Ok(mesh_handle) = mesh_handles.get(entity) {
                 if let Some(mesh) = meshes.get(mesh_handle) {
+                    num_meshes_seen += 1;
                     // println!("mesh: {:#?}", mesh);
                     if let Ok(material_handle) = material_handles.get(entity) {
                         if let Some(material) = materials.get_mut(material_handle) {
                             material.alpha_mode = AlphaMode::Blend;
-                            material.base_color.set_a(0.45);
-                            // commands.entity(entity).despawn();
+                            material.base_color.set_a(0.55);
                         }
                     }
+
+                    if name == "Cube.052" {
+                        commands.entity(entity).despawn();
+                    }
+                    // println!("NAMED MESH NODE: {:#?}", name);
+                    // if name == "staff_mesh".to_string() {
+                    //     commands.entity(entity).despawn();
+                    // }
                 }
             } else {
-                println!("non mesh containing entity ");
+                // println!("non mesh containing entity ");
                 if let Ok(global_transform) = global_transforms.get(entity) {
                     // transform.translation = Vec3::new(1.0, 0.0, 0.0);
-                    let cube_handle = meshes.add(Cube::new(0.1).into());
+
+                    // if name == "Adventurer_Body".to_string() {
+                    //     commands.entity(entity).despawn();
+                    // }
+                    // println!("NAMED NON MESH NODE: {:#?}", name);
+                    num_non_meshes_seen += 1;
+                    // println!("NAMED NON MESH NODE: {:#?}", name);
+                    let cube_handle = meshes.add(Cube::new(0.01).into());
+                    // cube_color.set_r(cube_color.r() + 0.1);
+                    cube_color.set_r(cube_color.r());
                     let cube_material_handle = materials.add(StandardMaterial {
-                        base_color: Color::rgb(0.8, 0.0, 0.0),
+                        base_color: cube_color.clone(),
                         ..default()
                     });
 
@@ -122,17 +233,11 @@ pub fn list_scene_tree(
                             transform: local_transform.clone().into(),
                             ..Default::default()
                         });
-
                         entity_commands.set_parent(entity);
-
-                        // commands.entity(entity).push_children();
                     }
-
-                    if let Some(gltf) = assets_gltf.get(&asset_pack.0) {}
                     // println!("with transform: {:#?}", transform);
                 }
             }
-
             // if let Ok(mut transform) = transforms.get_mut(entity) {
             //     let color = Color::hsl(
             //         ((1 as f32 * 2.345 + time.elapsed_seconds_wrapped()) * 100.0) % 360.0,
@@ -146,6 +251,7 @@ pub fn list_scene_tree(
             //     // transform.rotate_x(40.0);
             // }
         }
+        println!("num meshes seen: {num_meshes_seen}");
+        println!("num non meshes seen: {num_non_meshes_seen}");
     }
-    println!("scene: {:#?}", scene);
 }

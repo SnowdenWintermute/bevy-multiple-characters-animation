@@ -13533,7 +13533,7 @@
     ],
     "meshes" : [
         {
-            "name" : "_ncl1_29.004",
+            "name" : "full_body_mesh",
             "primitives" : [
                 {
                     "attributes" : {
@@ -13549,7 +13549,7 @@
             ]
         },
         {
-            "name" : "_ncl1_29.003",
+            "name" : "hair_and_mask_mesh",
             "primitives" : [
                 {
                     "attributes" : {
@@ -13563,7 +13563,7 @@
             ]
         },
         {
-            "name" : "Torus.010",
+            "name" : "staff_mesh",
             "primitives" : [
                 {
                     "attributes" : {
@@ -13577,7 +13577,7 @@
             ]
         },
         {
-            "name" : "_ncl1_29.005",
+            "name" : "shoulder_pad_mesh",
             "primitives" : [
                 {
                     "attributes" : {
