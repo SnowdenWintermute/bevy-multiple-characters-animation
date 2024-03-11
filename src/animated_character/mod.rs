@@ -23,8 +23,8 @@ impl Plugin for AnimatedCharacterPlugin {
                 (
                     link_animations::link_animations,
                     // print_scene_tree::print_scene_tree,
-                    // alter_mesh_materials::alter_mesh_materials,
-                    // paint_cubes_on_joints::paint_cubes_on_joints,
+                    alter_mesh_materials::alter_mesh_materials,
+                    paint_cubes_on_joints::paint_cubes_on_joints,
                 ),
             )
             .add_systems(

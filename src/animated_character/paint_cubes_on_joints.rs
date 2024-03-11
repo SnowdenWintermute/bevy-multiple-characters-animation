@@ -15,8 +15,8 @@ pub fn paint_cubes_on_joints(
     names: Query<&Name>,
 ) {
     for scene_entity in &scene_query {
-        let mut cube_color = Color::rgb(0.0, 0.0, 0.0);
-        // let mut cube_color = Color::rgb(1.0, 1.0, 1.0);
+        // let mut cube_color = Color::rgb(0.0, 0.0, 0.0);
+        let mut cube_color = Color::rgb(1.0, 0.0, 0.0);
         for (_, entity) in children.iter_descendants(scene_entity).enumerate() {
             let name = match names.get(entity) {
                 Ok(name) => format!("{name}"),
@@ -28,7 +28,7 @@ pub fn paint_cubes_on_joints(
                 if let Ok(_) = global_transforms.get(entity) {
                     // println!("NAMED NON MESH NODE: {:#?}", name);
                     let cube_handle = meshes.add(Cube::new(0.01).into());
-                    cube_color.set_r(cube_color.r() + 0.1);
+                    // cube_color.set_r(cube_color.r() + 0.1);
                     let cube_material_handle = materials.add(StandardMaterial {
                         base_color: cube_color.clone(),
                         ..default()

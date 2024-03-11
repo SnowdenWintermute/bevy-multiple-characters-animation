@@ -32,23 +32,32 @@ pub struct AssetPack(pub BTreeMap<String, GltfHandleLoadingTracker>);
 fn load_assets(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut gltf_handles = BTreeMap::new();
 
-    let handle_1 = asset_server.load("Casual.gltf");
+    let handle_0 = asset_server.load("modular experiment 1.glb");
     gltf_handles.insert(
-        String::from("Casual"),
+        String::from("experiment"),
         GltfHandleLoadingTracker {
-            gltf_handle: handle_1.clone(),
+            gltf_handle: handle_0.clone(),
             is_loaded: false,
         },
     );
 
-    let handle_2 = asset_server.load("Adventurer.gltf");
-    gltf_handles.insert(
-        String::from("Adventurer"),
-        GltfHandleLoadingTracker {
-            gltf_handle: handle_2.clone(),
-            is_loaded: false,
-        },
-    );
+    // let handle_1 = asset_server.load("Casual.gltf");
+    // gltf_handles.insert(
+    //     String::from("Casual"),
+    //     GltfHandleLoadingTracker {
+    //         gltf_handle: handle_1.clone(),
+    //         is_loaded: false,
+    //     },
+    // );
+
+    // let handle_2 = asset_server.load("Adventurer.gltf");
+    // gltf_handles.insert(
+    //     String::from("Adventurer"),
+    //     GltfHandleLoadingTracker {
+    //         gltf_handle: handle_2.clone(),
+    //         is_loaded: false,
+    //     },
+    // );
 
     commands.insert_resource(AssetPack(gltf_handles));
     // let handle = asset_server.load("Adventurer.gltf");
@@ -62,12 +71,12 @@ fn check_for_load_complete(
 ) {
     for event in asset_events.read() {
         println!(" event : {:#?}", event);
-    for (name, gltf_handle_loading_tracker) in asset_pack.0.iter_mut() {
-        if event.is_loaded_with_dependencies(&gltf_handle_loading_tracker.gltf_handle) {
-        println!("loaded  : {name}");
-            gltf_handle_loading_tracker.is_loaded = true;
+        for (name, gltf_handle_loading_tracker) in asset_pack.0.iter_mut() {
+            if event.is_loaded_with_dependencies(&gltf_handle_loading_tracker.gltf_handle) {
+                println!("loaded  : {name}");
+                gltf_handle_loading_tracker.is_loaded = true;
+            }
         }
-    }
         // println!("{:#?}", &gltf_handle_loading_tracker.gltf_handle);
         // if event.is_loaded_with_dependencies(&gltf_handle_loading_tracker.gltf_handle) {
         //     gltf_handle_loading_tracker.is_loaded = true
@@ -75,7 +84,10 @@ fn check_for_load_complete(
     }
 
     for (name, gltf_handle_loading_tracker) in asset_pack.0.iter_mut() {
-        println!("{name} is loaded : {}" , gltf_handle_loading_tracker.is_loaded);
+        println!(
+            "{name} is loaded : {}",
+            gltf_handle_loading_tracker.is_loaded
+        );
         if !gltf_handle_loading_tracker.is_loaded {
             return;
         }
