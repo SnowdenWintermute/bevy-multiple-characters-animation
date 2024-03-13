@@ -1,4 +1,4 @@
-use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
+use bevy::{gltf::Gltf, prelude::*};
 use std::collections::BTreeMap;
 
 #[derive(Debug, Default, Hash, PartialEq, Eq, Clone, States)]
@@ -32,15 +32,32 @@ pub struct AssetPack(pub BTreeMap<String, GltfHandleLoadingTracker>);
 fn load_assets(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut gltf_handles = BTreeMap::new();
 
-    let handle_0 = asset_server.load("modular experiment 1.glb");
+    let handle_0 = asset_server.load("Skeleton and Animations.glb");
     gltf_handles.insert(
-        String::from("experiment"),
+        String::from("main_skeleton"),
         GltfHandleLoadingTracker {
             gltf_handle: handle_0.clone(),
             is_loaded: false,
         },
     );
 
+    let sci_fi_torso_handle = asset_server.load("SciFi Torso.glb");
+    gltf_handles.insert(
+        String::from("SciFi Torso"),
+        GltfHandleLoadingTracker {
+            gltf_handle: sci_fi_torso_handle.clone(),
+            is_loaded: false,
+        },
+    );
+
+    // let handle_1 = asset_server.load("modular experiment 2.glb");
+    // gltf_handles.insert(
+    //     String::from("experiment2"),
+    //     GltfHandleLoadingTracker {
+    //         gltf_handle: handle_1.clone(),
+    //         is_loaded: false,
+    //     },
+    // );
     // let handle_1 = asset_server.load("Casual.gltf");
     // gltf_handles.insert(
     //     String::from("Casual"),

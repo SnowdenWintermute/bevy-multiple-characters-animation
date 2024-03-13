@@ -1,4 +1,5 @@
 mod alter_mesh_materials;
+mod attach_part;
 mod link_animations;
 mod paint_cubes_on_joints;
 mod print_scene_tree;
@@ -31,7 +32,7 @@ impl Plugin for AnimatedCharacterPlugin {
                 Update,
                 run_animations::run_animations.run_if(in_state(AssetLoaderState::Done)),
             )
-            .add_systems(OnEnter(SpawnCharacterState::Done), remove_parts);
+            .add_systems(OnEnter(SpawnCharacterState::Done), attach_part::attach_part);
     }
 }
 

@@ -16,7 +16,7 @@ pub fn paint_cubes_on_joints(
 ) {
     for scene_entity in &scene_query {
         // let mut cube_color = Color::rgb(0.0, 0.0, 0.0);
-        let mut cube_color = Color::rgb(1.0, 0.0, 0.0);
+        let cube_color = Color::rgb(1.0, 0.0, 0.0);
         for (_, entity) in children.iter_descendants(scene_entity).enumerate() {
             let name = match names.get(entity) {
                 Ok(name) => format!("{name}"),

@@ -19,7 +19,7 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         // SELF MADE
-        .add_plugins(PlanePlugin)
+        // .add_plugins(PlanePlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(AssetLoaderPlugin)
         .add_plugins(AnimatedCharacterPlugin)

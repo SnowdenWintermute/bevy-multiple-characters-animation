@@ -21,7 +21,12 @@ pub fn spawn_characters(
 ) {
     let mut x_pos = -0.5;
     for (name, gltf_handle_loading_tracker) in &asset_pack.0 {
+        println!("loading asset pack {name}");
         if let Some(gltf) = assets_gltf.get(&gltf_handle_loading_tracker.gltf_handle) {
+
+        if name == "SciFi Torso" {
+            x_pos += 1.5;
+        }
             commands.spawn((
                 SceneBundle {
                     scene: gltf.named_scenes["Scene"].clone(),
@@ -31,17 +36,19 @@ pub fn spawn_characters(
                 PlayerCharacterName(name.clone()),
             ));
 
-            x_pos += 1.0;
+
 
             let mut animations = HashMap::new();
             for named_animation in gltf.named_animations.iter() {
+                println!("inserting named animation: {}", named_animation.0);
                 animations.insert(
                     named_animation.0.clone(),
                     gltf.named_animations[named_animation.0].clone(),
                 );
             }
-
-            commands.insert_resource(Animations(animations));
+            if animations.len() > 0 {
+                commands.insert_resource(Animations(animations));
+            }
         }
     }
 

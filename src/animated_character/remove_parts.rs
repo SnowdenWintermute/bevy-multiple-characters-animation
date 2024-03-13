@@ -35,7 +35,7 @@ pub fn remove_parts(
     let scene_entity_option = {
         let mut to_return = None;
         for (entity, character_name) in scene_query.iter() {
-            if character_name.0 == "Casual" {
+            if character_name.0 == "experiment" {
                 to_return = Some(entity)
             }
         }
@@ -48,8 +48,8 @@ pub fn remove_parts(
                 Err(_) => "".to_string(),
             };
 
-            if name == "Casual_Body" {
-                // commands.entity(entity).despawn_recursive();
+            if name == "main upper" {
+                commands.entity(entity).despawn_recursive();
 
                 if let Some(gltf_loading_tracker) = &asset_pack.0.get("Adventurer") {
                     if let Some(gltf) = assets_gltf.get(&gltf_loading_tracker.gltf_handle) {
