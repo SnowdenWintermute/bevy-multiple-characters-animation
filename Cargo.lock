@@ -757,6 +757,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_mod_billboard"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "661ea549adc9e90e1f38ce9a4937e1c153c785ce588037bb156b9fe7e03a984d"
+dependencies = [
+ "bevy",
+ "bitflags 2.4.1",
+ "smallvec",
+]
+
+[[package]]
 name = "bevy_panorbit_camera"
 version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1283,6 +1294,7 @@ name = "character_animation_bevy"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_mod_billboard",
  "bevy_panorbit_camera",
 ]
 

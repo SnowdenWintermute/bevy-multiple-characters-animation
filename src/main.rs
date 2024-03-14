@@ -5,9 +5,10 @@ mod level;
 use animated_character::AnimatedCharacterPlugin;
 use asset_loader::AssetLoaderPlugin;
 use bevy::prelude::*;
+use bevy_mod_billboard::prelude::*;
 use bevy_panorbit_camera::PanOrbitCameraPlugin;
 use camera::CameraPlugin;
-use level::PlanePlugin;
+// use level::PlanePlugin;
 
 fn main() {
     App::new()
@@ -25,5 +26,6 @@ fn main() {
         .add_plugins(AnimatedCharacterPlugin)
         // EXTERNAL DEPENDENCIES
         .add_plugins(PanOrbitCameraPlugin)
+        .add_plugins(BillboardPlugin)
         .run();
 }

@@ -1,9 +1,11 @@
 use super::spawn_characters::PlayerCharacterName;
 use crate::asset_loader::AssetPack;
-use bevy::{gltf::Gltf, prelude::*, render::mesh::shape::Cube};
+use bevy::{ecs::system::EntityCommands, gltf::Gltf, prelude::*, render::mesh::shape::Cube};
+use bevy_mod_billboard::prelude::*;
 
 pub fn paint_cubes_on_joints(
     mut commands: Commands,
+    asset_server: Res<AssetServer>,
     scene_query: Query<Entity, With<PlayerCharacterName>>,
     children: Query<&Children>,
     material_handles: Query<&Handle<StandardMaterial>>,
@@ -17,6 +19,7 @@ pub fn paint_cubes_on_joints(
     for scene_entity in &scene_query {
         // let mut cube_color = Color::rgb(0.0, 0.0, 0.0);
         let cube_color = Color::rgb(1.0, 0.0, 0.0);
+        let mut y = 0.01;
         for (_, entity) in children.iter_descendants(scene_entity).enumerate() {
             let name = match names.get(entity) {
                 Ok(name) => format!("{name}"),
@@ -33,6 +36,23 @@ pub fn paint_cubes_on_joints(
                         base_color: cube_color.clone(),
                         ..default()
                     });
+
+                    let fira_sans_regular_handle = asset_server.load("FiraSans-Regular.ttf");
+                    let mut billboard_entity_commands = commands.spawn(BillboardTextBundle {
+                        transform: Transform::from_xyz(0.02, y, 0.0)
+                            .with_scale(Vec3::splat(0.0005)),
+                        text: Text::from_sections([TextSection {
+                            value: format!("{}", name),
+                            style: TextStyle {
+                                font_size: 60.0,
+                                font: fira_sans_regular_handle.clone(),
+                                color: Color::WHITE,
+                            },
+                        }]),
+                        ..default()
+                    });
+                    billboard_entity_commands.set_parent(entity);
+                    y += 0.01;
 
                     if let Ok(_) = transforms.get_mut(scene_entity) {
                         let mut entity_commands = commands.spawn(PbrBundle {

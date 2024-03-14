@@ -18,27 +18,57 @@ pub fn attach_part(
     global_transforms: Query<&GlobalTransform>,
     names: Query<&Name>,
 ) {
-    // let mut main_bones = HashMap::new();
-    // let mut part_bones = HashMap::new();
+    let mut main_bones = HashMap::new();
     for (player_character_entity, player_character_name) in &player_character_query {
         let depth = 0;
         println!("found player character name: {}", player_character_name.0);
         // if player_character_name.0 == "main_skeleton" {
+        if player_character_name.0 == "main_skeleton" {
+            let root_bone = find_child_with_name_containing(
+                &all_child_entities,
+                &names,
+                &player_character_entity,
+                "Root",
+            )
+            .expect("skeleton to have bones");
+            // walk_tree(&all_child_entities, &names, &player_character_entity, depth);
+
+            collect_bones(&all_child_entities, &names, &root_bone, &mut main_bones);
+
+            println!("main bones: {:#?}", main_bones);
+        }
+    }
+
+    for (player_character_entity, player_character_name) in &player_character_query {
         if player_character_name.0 == "SciFi Torso" {
             println!("dealing with: {}", player_character_name.0);
-            let armature = find_child_with_name_containing(
+            let root_bone_option = find_child_with_name_containing(
                 &all_child_entities,
                 &names,
                 &player_character_entity,
                 "Root",
             );
 
-            // walk_tree(
-            //     &all_child_entities,
-            //     &names,
-            //     &player_character_entity,
-            //     depth,
-            // );
+            if let Some(root_bone) = root_bone_option {
+                let mut part_bones = HashMap::new();
+                collect_bones(&all_child_entities, &names, &root_bone, &mut part_bones);
+                println!("part bones: {:#?}", part_bones);
+
+                for (name, part_bone) in part_bones {
+                    let mut entity_commands = commands.entity(part_bone);
+                    let new_parent_option = main_bones.get(&name);
+                    if let Some(new_parent) = new_parent_option {
+                        if let Ok(mut transform) = transforms.get_mut(part_bone) {
+                            transform.translation.x = 0.0;
+                            transform.translation.y = 0.0;
+                            transform.translation.z = 0.0;
+                            transform.rotation = Quat::from_xyzw(0.0, 0.0, 0.0, 0.0);
+                        }
+                        entity_commands.set_parent(*new_parent);
+                    }
+                }
+                // walk_tree(&all_child_entities, &names, &root_bone, depth);
+            }
         }
         // find_bones(
         //     &all_entities_with_children,
@@ -90,12 +120,22 @@ pub fn attach_part(
     // }
 }
 
-// pub fn get_bones_from_scene(
-//     all_child_entities: &Query<&Children>,
-//     names: &Query<&Name>,
-//     scene_root_entity: &Entity,
-// ) {
-// }
+pub fn collect_bones(
+    all_child_entities: &Query<&Children>,
+    names: &Query<&Name>,
+    root_bone: &Entity,
+    collected: &mut HashMap<String, Entity>,
+) {
+    if let Ok(name) = names.get(*root_bone) {
+        collected.insert(format!("{}", name), *root_bone);
+
+        if let Ok(children) = all_child_entities.get(*root_bone) {
+            for child in children {
+                collect_bones(all_child_entities, names, child, collected)
+            }
+        }
+    }
+}
 
 pub fn find_child_with_name_containing(
     all_child_entities: &Query<&Children>,
@@ -124,47 +164,4 @@ pub fn find_child_with_name_containing(
     }
 
     None
-}
-
-pub fn find_bones(
-    all_entities_with_children: &Query<&Children>,
-    names: &Query<&Name>,
-    entity: &Entity,
-    depth: u32,
-    main_bones: &mut HashMap<u32, Entity>,
-    part_bones: &mut HashMap<u32, Entity>,
-) -> () {
-    let mut padding = String::from("");
-    for _ in 0..depth {
-        padding.push_str("-")
-    }
-    if let Ok(name) = names.get(*entity) {
-        println!("{padding}{:#?}({:?})", name, entity);
-        let as_string = format!("{}", name);
-        let split = as_string.split("-").collect::<Vec<&str>>();
-        if split[0] == "main" {
-            println!("found main bone number {}", split[2]);
-            let bone_number = split[2].parse::<u32>().expect("");
-            main_bones.insert(bone_number, *entity);
-        } else if split[0] == "part" {
-            println!("found part bone number {}", split[2]);
-            let bone_number = split[2].parse::<u32>().expect("");
-            part_bones.insert(bone_number, *entity);
-        }
-    } else {
-        println!("{padding}unnamed entity: {:#?}", entity)
-    }
-
-    if let Ok(children_of_curr_node) = all_entities_with_children.get(*entity) {
-        for child_entity in children_of_curr_node {
-            find_bones(
-                all_entities_with_children,
-                names,
-                child_entity,
-                depth + 1,
-                main_bones,
-                part_bones,
-            )
-        }
-    }
 }
