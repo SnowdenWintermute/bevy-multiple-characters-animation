@@ -1,20 +1,24 @@
 mod alter_mesh_materials;
 mod attach_part;
 mod link_animations;
+mod move_scene_transform;
 mod paint_cubes_on_joints;
 mod print_scene_tree;
 mod remove_parts;
 mod run_animations;
 mod spawn_characters;
+mod update_aabb_positions;
+use self::move_scene_transform::move_scene_transform;
 use self::remove_parts::remove_parts;
 use self::spawn_characters::{PlayerCharacterName, SpawnCharacterState};
+use self::update_aabb_positions::update_aabb_positions;
 use crate::asset_loader::AssetLoaderState;
 use bevy::{prelude::*, utils::HashMap};
 
 pub struct AnimatedCharacterPlugin;
 impl Plugin for AnimatedCharacterPlugin {
     fn build(&self, app: &mut App) {
-        app.add_state::<SpawnCharacterState>()
+        app.init_state::<SpawnCharacterState>()
             .add_systems(
                 OnEnter(AssetLoaderState::Done),
                 spawn_characters::spawn_characters,
@@ -32,6 +36,7 @@ impl Plugin for AnimatedCharacterPlugin {
                 Update,
                 run_animations::run_animations.run_if(in_state(AssetLoaderState::Done)),
             )
+            // .add_systems(Update, update_aabb_positions)
             .add_systems(OnEnter(SpawnCharacterState::Done), attach_part::attach_part);
     }
 }

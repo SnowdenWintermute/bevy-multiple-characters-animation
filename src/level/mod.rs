@@ -13,8 +13,8 @@ fn setup_plane(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Plane::from_size(50.0).into()),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+        mesh: meshes.add(Plane3d::default().mesh().size(50.0, 50.0)),
+        material: materials.add(Color::rgb(0.3, 0.5, 0.3)),
         ..Default::default()
     });
 }

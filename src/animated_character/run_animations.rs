@@ -12,13 +12,14 @@ pub fn run_animations(
     for (player_character_name, animation_entity_link) in &mut player_character_query.iter_mut() {
         if let Ok(mut animation_player) = animation_player_query.get_mut(animation_entity_link.0) {
             println!("{}", player_character_name.0);
+            // if player_character_name.0 == "Adventurer".to_string() {
             if player_character_name.0 == "main_skeleton".to_string() {
                 println!("STARTING ANIMATION");
                 animation_player
                     .play(
                         animations
                             .0
-                            .get("Idle")
+                            .get("Sword_Slash")
                             .expect("animation to exist")
                             .clone_weak(),
                     )

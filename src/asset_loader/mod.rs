@@ -11,7 +11,7 @@ pub enum AssetLoaderState {
 pub struct AssetLoaderPlugin;
 impl Plugin for AssetLoaderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_state::<AssetLoaderState>()
+        app.init_state::<AssetLoaderState>()
             .add_systems(OnEnter(AssetLoaderState::Loading), load_assets)
             .add_systems(
                 Update,
@@ -32,7 +32,7 @@ pub struct AssetPack(pub BTreeMap<String, GltfHandleLoadingTracker>);
 fn load_assets(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut gltf_handles = BTreeMap::new();
 
-    let handle_0 = asset_server.load("Skeleton and Animations.glb");
+    let handle_0 = asset_server.load("main_skeleton.glb");
     gltf_handles.insert(
         String::from("main_skeleton"),
         GltfHandleLoadingTracker {
@@ -50,14 +50,23 @@ fn load_assets(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
     );
 
-    // let handle_1 = asset_server.load("modular experiment 2.glb");
-    // gltf_handles.insert(
-    //     String::from("experiment2"),
-    //     GltfHandleLoadingTracker {
-    //         gltf_handle: handle_1.clone(),
-    //         is_loaded: false,
-    //     },
-    // );
+    let witch_legs_handle = asset_server.load("Witch Legs.glb");
+    gltf_handles.insert(
+        String::from("Witch Legs"),
+        GltfHandleLoadingTracker {
+            gltf_handle: witch_legs_handle.clone(),
+            is_loaded: false,
+        },
+    );
+
+    let sword_handle = asset_server.load("Sword_Golden.glb");
+    gltf_handles.insert(
+        String::from("Sword"),
+        GltfHandleLoadingTracker {
+            gltf_handle: sword_handle.clone(),
+            is_loaded: false,
+        },
+    );
     // let handle_1 = asset_server.load("Casual.gltf");
     // gltf_handles.insert(
     //     String::from("Casual"),

@@ -9,6 +9,8 @@ edition = "2021"
 opt-level = 1
 
 [dependencies]
-bevy = { version = "0.12.0", features = ["dynamic_linking"] }
-bevy_panorbit_camera = "0.9.0"
-bevy_mod_billboard = "0.5.1"
+bevy = { version = "0.13.0", features = ["dynamic_linking"] }
+bevy_panorbit_camera = "0.16.0"
+bevy_mod_billboard = { git = "https://github.com/kulkalkul/bevy_mod_billboard" }
+pixelate_mesh = { git = "https://github.com/janhohenheim/pixelate_mesh" }
+# bevy_mod_billboard = "0.5.1"

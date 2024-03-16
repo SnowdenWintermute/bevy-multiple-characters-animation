@@ -8,6 +8,10 @@ impl Plugin for CameraPlugin {
     }
 }
 
+// Create a component for the main camera
+#[derive(Component)]
+pub struct MainCamera;
+
 fn spawn_camera(mut commands: Commands) {
     commands.spawn((
         Camera3dBundle {
@@ -19,5 +23,6 @@ fn spawn_camera(mut commands: Commands) {
             radius: Some(6.0),
             ..Default::default()
         },
+        MainCamera,
     ));
 }

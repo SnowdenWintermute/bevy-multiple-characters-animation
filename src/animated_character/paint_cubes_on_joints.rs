@@ -1,6 +1,5 @@
 use super::spawn_characters::PlayerCharacterName;
-use crate::asset_loader::AssetPack;
-use bevy::{ecs::system::EntityCommands, gltf::Gltf, prelude::*, render::mesh::shape::Cube};
+use bevy::prelude::*;
 use bevy_mod_billboard::prelude::*;
 
 pub fn paint_cubes_on_joints(
@@ -30,7 +29,7 @@ pub fn paint_cubes_on_joints(
             if let Err(_) = mesh_handles.get(entity) {
                 if let Ok(_) = global_transforms.get(entity) {
                     // println!("NAMED NON MESH NODE: {:#?}", name);
-                    let cube_handle = meshes.add(Cube::new(0.01).into());
+                    let cube_handle = meshes.add(Cuboid::new(0.01, 0.01, 0.01));
                     // cube_color.set_r(cube_color.r() + 0.1);
                     let cube_material_handle = materials.add(StandardMaterial {
                         base_color: cube_color.clone(),
