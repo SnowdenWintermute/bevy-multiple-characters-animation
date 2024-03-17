@@ -1,8 +1,8 @@
-use super::spawn_characters::PlayerCharacterName;
+use super::spawn_characters::SceneName;
 use bevy::prelude::*;
 
 pub fn alter_mesh_materials(
-    scene_query: Query<Entity, With<PlayerCharacterName>>,
+    scene_query: Query<Entity, With<SceneName>>,
     children: Query<&Children>,
     material_handles: Query<&Handle<StandardMaterial>>,
     mut materials: ResMut<Assets<StandardMaterial>>,

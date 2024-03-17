@@ -1,44 +1,40 @@
-use super::{link_animations::AnimationEntityLink, Animations, PlayerCharacterName};
+use super::{
+    link_animations::AnimationEntityLink, spawn_characters::SceneEntitiesByName, Animations,
+    SceneName,
+};
 use bevy::prelude::*;
 
 pub fn run_animations(
     mut animation_player_query: Query<&mut AnimationPlayer>,
-    mut player_character_query: Query<
-        (&PlayerCharacterName, &AnimationEntityLink),
+    scene_and_animation_player_link_query: Query<
+        (&SceneName, &AnimationEntityLink),
         Added<AnimationEntityLink>,
     >,
     animations: Res<Animations>,
+    scene_entities_by_name: Res<SceneEntitiesByName>,
 ) {
-    for (player_character_name, animation_entity_link) in &mut player_character_query.iter_mut() {
-        if let Ok(mut animation_player) = animation_player_query.get_mut(animation_entity_link.0) {
-            println!("{}", player_character_name.0);
-            // if player_character_name.0 == "Adventurer".to_string() {
-            if player_character_name.0 == "main_skeleton".to_string() {
-                println!("STARTING ANIMATION");
-                animation_player
-                    .play(
-                        animations
-                            .0
-                            .get("Sword_Slash")
-                            .expect("animation to exist")
-                            .clone_weak(),
-                    )
-                    .repeat()
-                    .set_speed(0.5);
-            }
+    let main_skeleton_scene_entity = scene_entities_by_name
+        .0
+        .get("main_skeleton.glb")
+        .expect("the scene to be registered");
 
-            // if player_character_name.0 == "Casual".to_string() {
-            //     animation_player
-            //         .play(
-            //             animations
-            //                 .0
-            //                 .get("Idle")
-            //                 .expect("animation to exist")
-            //                 .clone_weak(),
-            //         )
-            //         .repeat()
-            //         .set_speed(1.0);
-            // }
-        }
-    }
+    let (_, animation_player_entity_link) = scene_and_animation_player_link_query
+        .get(*main_skeleton_scene_entity)
+        .expect("the scene to exist");
+
+    let mut animation_player = animation_player_query
+        .get_mut(animation_player_entity_link.0)
+        .expect("to have an animation player on the main skeleton");
+
+    println!("STARTING ANIMATION");
+    animation_player
+        .play(
+            animations
+                .0
+                .get("Sword_Slash")
+                .expect("animation to exist")
+                .clone_weak(),
+        )
+        .repeat()
+        .set_speed(0.5);
 }

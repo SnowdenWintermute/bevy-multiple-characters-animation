@@ -1,11 +1,11 @@
-use super::spawn_characters::PlayerCharacterName;
+use super::spawn_characters::SceneName;
 use bevy::prelude::*;
 use bevy_mod_billboard::prelude::*;
 
 pub fn paint_cubes_on_joints(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    scene_query: Query<Entity, With<PlayerCharacterName>>,
+    scene_query: Query<Entity, With<SceneName>>,
     children: Query<&Children>,
     material_handles: Query<&Handle<StandardMaterial>>,
     mut materials: ResMut<Assets<StandardMaterial>>,

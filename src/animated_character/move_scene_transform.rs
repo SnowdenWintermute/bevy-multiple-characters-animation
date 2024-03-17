@@ -1,8 +1,8 @@
-use super::spawn_characters::PlayerCharacterName;
+use super::spawn_characters::SceneName;
 use bevy::prelude::*;
 
 pub fn move_scene_transform(
-    scene_query: Query<(Entity, &PlayerCharacterName), With<PlayerCharacterName>>,
+    scene_query: Query<(Entity, &SceneName), With<SceneName>>,
     mut transforms: Query<&mut Transform>,
     mut global_transforms: Query<&mut GlobalTransform>,
 ) {

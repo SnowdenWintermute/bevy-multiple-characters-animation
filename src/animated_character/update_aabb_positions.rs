@@ -1,8 +1,8 @@
-use super::spawn_characters::PlayerCharacterName;
+use super::spawn_characters::SceneName;
 use bevy::{prelude::*, render::primitives::Aabb};
 
 pub fn update_aabb_positions(
-    scene_query: Query<(Entity, &PlayerCharacterName), With<PlayerCharacterName>>,
+    scene_query: Query<(Entity, &SceneName), With<SceneName>>,
     mut transforms: Query<&mut Transform>,
     global_transforms: Query<&GlobalTransform>,
     mut axis_aligned_bounding_boxes: Query<(Entity, &mut Aabb), With<Aabb>>,

@@ -10,7 +10,7 @@ mod spawn_characters;
 mod update_aabb_positions;
 use self::move_scene_transform::move_scene_transform;
 use self::remove_parts::remove_parts;
-use self::spawn_characters::{PlayerCharacterName, SpawnCharacterState};
+use self::spawn_characters::{SceneName, SpawnScenesState};
 use self::update_aabb_positions::update_aabb_positions;
 use crate::asset_loader::AssetLoaderState;
 use bevy::{prelude::*, utils::HashMap};
@@ -18,13 +18,13 @@ use bevy::{prelude::*, utils::HashMap};
 pub struct AnimatedCharacterPlugin;
 impl Plugin for AnimatedCharacterPlugin {
     fn build(&self, app: &mut App) {
-        app.init_state::<SpawnCharacterState>()
+        app.init_state::<SpawnScenesState>()
             .add_systems(
                 OnEnter(AssetLoaderState::Done),
                 spawn_characters::spawn_characters,
             )
             .add_systems(
-                OnEnter(SpawnCharacterState::Spawned),
+                OnEnter(SpawnScenesState::Spawned),
                 (
                     link_animations::link_animations,
                     // print_scene_tree::print_scene_tree,
@@ -33,11 +33,11 @@ impl Plugin for AnimatedCharacterPlugin {
                 ),
             )
             .add_systems(
-                Update,
-                run_animations::run_animations.run_if(in_state(AssetLoaderState::Done)),
+                OnEnter(SpawnScenesState::Done),
+                run_animations::run_animations,
             )
             // .add_systems(Update, update_aabb_positions)
-            .add_systems(OnEnter(SpawnCharacterState::Done), attach_part::attach_part);
+            .add_systems(OnEnter(SpawnScenesState::Done), attach_part::attach_part);
     }
 }
 

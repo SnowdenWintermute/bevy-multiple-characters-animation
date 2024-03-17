@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::spawn_characters::SpawnCharacterState;
+use super::spawn_characters::SpawnScenesState;
 
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);
@@ -25,7 +25,7 @@ pub fn link_animations(
     all_entities_with_parents_query: Query<&Parent>,
     animations_entity_link_query: Query<&AnimationEntityLink>,
     mut commands: Commands,
-    mut next_state: ResMut<NextState<SpawnCharacterState>>,
+    mut next_state: ResMut<NextState<SpawnScenesState>>,
 ) {
     // Get all the Animation players which can be deep and hidden in the heirachy
     for entity_with_animation_player in animation_players_query.iter() {
@@ -48,5 +48,5 @@ pub fn link_animations(
         }
     }
 
-    next_state.set(SpawnCharacterState::Done)
+    next_state.set(SpawnScenesState::Done)
 }

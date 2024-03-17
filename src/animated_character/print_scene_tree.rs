@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use super::spawn_characters::PlayerCharacterName;
+use super::spawn_characters::SceneName;
 use bevy::prelude::*;
 
 pub fn walk_tree(
@@ -26,7 +26,7 @@ pub fn walk_tree(
 }
 
 pub fn print_scene_tree(
-    scene_query: Query<Entity, With<PlayerCharacterName>>,
+    scene_query: Query<Entity, With<SceneName>>,
     children: Query<&Children>,
     names: Query<&Name>,
 ) {
