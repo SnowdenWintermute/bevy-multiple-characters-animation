@@ -1,6 +1,5 @@
+use super::spawn_scenes::SpawnScenesState;
 use bevy::prelude::*;
-
-use super::spawn_characters::SpawnScenesState;
 
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);

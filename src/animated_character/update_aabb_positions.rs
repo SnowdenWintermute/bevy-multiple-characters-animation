@@ -1,4 +1,4 @@
-use super::spawn_characters::SceneName;
+use super::spawn_scenes::SceneName;
 use bevy::{prelude::*, render::primitives::Aabb};
 
 pub fn update_aabb_positions(

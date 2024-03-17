@@ -3,7 +3,7 @@ use crate::animated_character::{
         collect_bones::collect_bones,
         find_child_with_name_containing::find_child_with_name_containing,
     },
-    spawn_characters::SceneEntitiesByName,
+    spawn_scenes::SceneEntitiesByName,
 };
 use bevy::{prelude::*, utils::HashMap};
 

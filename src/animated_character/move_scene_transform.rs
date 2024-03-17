@@ -1,4 +1,4 @@
-use super::spawn_characters::SceneName;
+use super::spawn_scenes::SceneName;
 use bevy::prelude::*;
 
 pub fn move_scene_transform(

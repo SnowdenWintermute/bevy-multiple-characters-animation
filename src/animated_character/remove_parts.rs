@@ -1,4 +1,4 @@
-use super::spawn_characters::{SceneName, SpawnScenesState};
+use super::spawn_scenes::{SceneName, SpawnScenesState};
 use crate::asset_loader::MyAssets;
 use bevy::{
     gltf::{Gltf, GltfMesh},

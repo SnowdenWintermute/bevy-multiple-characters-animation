@@ -26,6 +26,7 @@ pub struct MyAssets {
             "main_skeleton.glb",
             "SciFi Torso.glb",
             "Witch Legs.glb",
+            "Spacesuit Helmet.glb",
             "Sword Golden.glb"
         ),
         collection(typed, mapped)

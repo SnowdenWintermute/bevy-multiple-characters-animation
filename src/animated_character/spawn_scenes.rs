@@ -16,7 +16,7 @@ pub enum SpawnScenesState {
 #[derive(Resource)]
 pub struct SceneEntitiesByName(pub HashMap<String, Entity>);
 
-pub fn spawn_characters(
+pub fn spawn_scenes(
     mut commands: Commands,
     asset_pack: Res<MyAssets>,
     assets_gltf: Res<Assets<Gltf>>,

@@ -6,7 +6,7 @@ use self::{
     attach_part_to_main_skeleton::attach_part_to_main_skeleton,
     get_main_skeleton_bones_and_armature::get_main_skeleton_bones_and_armature,
 };
-use super::spawn_characters::{SceneEntitiesByName, SceneName};
+use super::spawn_scenes::{SceneEntitiesByName, SceneName};
 use bevy::prelude::*;
 
 pub fn assemble_parts(
@@ -29,7 +29,10 @@ pub fn assemble_parts(
             if let Some(hand_bone) = main_skeleton_bones.get("EquipmentHandle.R") {
                 entity_commands.set_parent(*hand_bone);
             }
-        } else if part_scene_name.0 == "SciFi Torso.glb" || part_scene_name.0 == "Witch Legs.glb" {
+        } else if part_scene_name.0 == "SciFi Torso.glb"
+            || part_scene_name.0 == "Witch Legs.glb"
+            || part_scene_name.0 == "Spacesuit Helmet.glb"
+        {
             attach_part_to_main_skeleton(
                 &mut commands,
                 &all_entities_with_children,

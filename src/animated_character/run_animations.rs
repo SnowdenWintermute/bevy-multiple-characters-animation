@@ -1,6 +1,5 @@
 use super::{
-    link_animations::AnimationEntityLink, spawn_characters::SceneEntitiesByName, Animations,
-    SceneName,
+    link_animations::AnimationEntityLink, spawn_scenes::SceneEntitiesByName, Animations, SceneName,
 };
 use bevy::prelude::*;
 

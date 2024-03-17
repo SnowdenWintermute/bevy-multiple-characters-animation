@@ -1,4 +1,4 @@
-use super::spawn_characters::SceneName;
+use super::spawn_scenes::SceneName;
 use bevy::prelude::*;
 use bevy_mod_billboard::prelude::*;
 
@@ -7,7 +7,6 @@ pub fn paint_cubes_on_joints(
     asset_server: Res<AssetServer>,
     scene_query: Query<Entity, With<SceneName>>,
     children: Query<&Children>,
-    material_handles: Query<&Handle<StandardMaterial>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -15,14 +14,13 @@ pub fn paint_cubes_on_joints(
     global_transforms: Query<&GlobalTransform>,
     names: Query<&Name>,
 ) {
+    let mut y = 0.01;
     for scene_entity in &scene_query {
-        // let mut cube_color = Color::rgb(0.0, 0.0, 0.0);
         let cube_color = Color::rgb(1.0, 0.0, 0.0);
-        let mut y = 0.01;
         for (_, entity) in children.iter_descendants(scene_entity).enumerate() {
             let name = match names.get(entity) {
                 Ok(name) => format!("{name}"),
-                Err(_) => "".to_string(),
+                Err(_) => "unnamed".to_string(),
             };
 
             // NON_MESH ENTITY;
@@ -30,12 +28,12 @@ pub fn paint_cubes_on_joints(
                 if let Ok(_) = global_transforms.get(entity) {
                     // println!("NAMED NON MESH NODE: {:#?}", name);
                     let cube_handle = meshes.add(Cuboid::new(0.01, 0.01, 0.01));
-                    // cube_color.set_r(cube_color.r() + 0.1);
                     let cube_material_handle = materials.add(StandardMaterial {
                         base_color: cube_color.clone(),
                         ..default()
                     });
 
+                    // LABEL IT
                     let fira_sans_regular_handle = asset_server.load("FiraSans-Regular.ttf");
                     let mut billboard_entity_commands = commands.spawn(BillboardTextBundle {
                         transform: Transform::from_xyz(0.02, y, 0.0)
@@ -51,7 +49,6 @@ pub fn paint_cubes_on_joints(
                         ..default()
                     });
                     billboard_entity_commands.set_parent(entity);
-                    y += 0.01;
 
                     if let Ok(_) = transforms.get_mut(scene_entity) {
                         let mut entity_commands = commands.spawn(PbrBundle {
@@ -67,5 +64,7 @@ pub fn paint_cubes_on_joints(
                 }
             }
         }
+
+        // y += 0.02;
     }
 }
