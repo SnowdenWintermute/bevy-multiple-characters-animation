@@ -1,5 +1,5 @@
 mod alter_mesh_materials;
-mod attach_part;
+mod assemble_parts;
 mod link_animations;
 mod move_scene_transform;
 mod paint_cubes_on_joints;
@@ -37,7 +37,10 @@ impl Plugin for AnimatedCharacterPlugin {
                 run_animations::run_animations,
             )
             // .add_systems(Update, update_aabb_positions)
-            .add_systems(OnEnter(SpawnScenesState::Done), attach_part::attach_part);
+            .add_systems(
+                OnEnter(SpawnScenesState::Done),
+                assemble_parts::assemble_parts,
+            );
     }
 }
 
